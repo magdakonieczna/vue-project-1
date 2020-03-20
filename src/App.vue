@@ -1,8 +1,18 @@
 <template>
-  <div class="wrapper">
-    <MoonImage />
-    <Claim />
-    <SearchInput  v-model="searchValue" @input="handleInput" />
+  <div :class="[{flexStart: step === 1}, 'wrapper']">
+    <transition name="slide">
+      <h3 v-if="step === 1" class="logo">Spacer</h3>
+    </transition>
+    <transition name="fade">
+      <MoonImage v-if="step === 0" />
+    </transition>
+    <Claim v-if="step === 0" />
+    <SearchInput  v-model="searchValue" @input="handleInput" :dark="step === 1" />
+    <div class="results" v-if="results && !loading && step === 1">
+      <Item v-for="item in results" :item="item" :key="item
+      .data[0].nasa_id" @click.native="handleModalOpen(item)" />
+    </div>
+    <Modal v-if="modalOpen" :item="modalItem" @closeModal="modalOpen = false" />
   </div>
 </template>
 <script>
@@ -11,6 +21,8 @@ import debounce from 'lodash.debounce';
 import Claim from '@/components/Claim.vue';
 import SearchInput from '@/components/SearchInput.vue';
 import MoonImage from '@/components/MoonImage.vue';
+import Item from '@/components/Item.vue';
+import Modal from '@/components/Modal.vue';
 
 const API = 'https://images-api.nasa.gov/search';
 
@@ -20,18 +32,31 @@ export default {
     MoonImage,
     Claim,
     SearchInput,
+    Item,
+    Modal,
   },
   data() {
     return {
+      modalOpen: false,
+      modalItem: null,
+      loading: false,
+      step: 0,
       searchValue: '',
       results: [],
     };
   },
   methods: {
+    handleModalOpen(item) {
+      this.modalOpen = true;
+      this.modalItem = item;
+    },
     handleInput: debounce(function Moon() {
+      this.loading = true;
       console.log(this.searchValue);
       axios.get(`${API}?q=${this.searchValue}&media_type=image`).then((response) => {
         this.results = response.data.collection.items;
+        this.loading = false;
+        this.step = 1;
       }).catch((error) => {
         console.log(error);
       });
@@ -51,6 +76,18 @@ export default {
     margin: 0;
     padding: 0;
   }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .3s ease;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  .slide-enter-active, .slide-leave-active {
+    transition: margin-top .3s ease;
+  }
+  .slide-enter, .slide-leave-to {
+    margin-top: -50px
+  }
   .wrapper {
     width: 100%;
     min-height: 100vh;
@@ -60,5 +97,23 @@ export default {
     justify-content: center;
     margin: 0;
     padding: 30px;
+    position: relative;
+    &.flexStart {
+      justify-content: flex-start;
+    }
+  }
+  .logo {
+    position: absolute;
+    top: 25px;
+  }
+
+  .results {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
   }
 </style>
