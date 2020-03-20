@@ -1,8 +1,5 @@
 <template>
-  <div class="wrapper">
-    <Claim />
-    <SearchInput />
-  </div>
+
 <!--    <ul>-->
 <!--      <li v-for="item in results" :key="item.data[0].nasa_id">-->
 <!--        <p>{{ item.data[0].description }}</p>-->

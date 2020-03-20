@@ -21,9 +21,16 @@ export default {
     .claim {
       font-size: 50px;
       margin: 0;
-      .subclaim {
-        margin: 20px 0 0 0;
-        font-size: 13px;
+    }
+    .subclaim {
+      width: 500px;
+      margin: 20px 0 0 0;
+      font-size: 13px;
+      text-align: center;
+      font-weight: 300;
+      letter-spacing: 1px;
+      @media (max-width: 768px) {
+        width: 100%;
       }
     }
   }

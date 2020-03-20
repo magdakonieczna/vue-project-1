@@ -1,7 +1,7 @@
 <template>
   <div class="searchWrapper">
     <div class="search">
-      <input id="search" type="search" v-model="searchValue" @input="handleInput" />
+      <input id="search" name="search" :value="value" @input="handleChange" />
     </div>
   </div>
 </template>
@@ -9,6 +9,17 @@
 <script>
 export default {
   name: 'SearchInput',
+  props: {
+    value: {
+      type: String,
+      required: true,
+    },
+  },
+  methods: {
+    handleChange(e) {
+      this.$emit('input', e.target.value);
+    },
+  },
 };
 </script>
 
@@ -21,9 +32,17 @@ export default {
       flex-direction: column;
       input {
         background: none;
-        height: 30px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 16px;
+        text-align: center;
+        height: 40px;
         border: 0;
         border-bottom: 1px solid black;
+        transition: box-shadow .5s;
+        &:focus {
+          outline: none;
+          box-shadow: 0 10px 20px -8px black;
+        }
       }
     }
   }
