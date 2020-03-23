@@ -2,11 +2,11 @@
   <div class="outerWrapper">
     <div class="innerWrapper">
       <div class="photo">
-        <img src="" alt="">
+        <img :src="photo" alt="">
       </div>
       <div class="description">
-        <h2 class="title"></h2>
-        <p class="description"></p>
+        <h2 class="title">{{ title }}</h2>
+        <p class="description">{{ description }}</p>
       </div>
     </div>
     <div class="close" @click="$emit('closeModal')"></div>
@@ -16,18 +16,37 @@
 <script>
 export default {
   name: 'Modal',
+  props: {
+    item: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      photo: null,
+      title: null,
+      description: null,
+    };
+  },
+  mounted() {
+    this.photo = this.item.links[0].href;
+    this.title = this.item.data[0].title;
+    this.description = this.item.data[0].description;
+  },
 };
 </script>
 
 <style lang="scss" scoped>
   .outerWrapper {
     max-width: 100%;
-    height: 100%;
+    height: 61%;
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
     background: #F6F6F6;
-    /*position: relative;*/
+    width: 80%;
+    transform: translate(-50%, -50%);
   }
   .close {
     position: absolute;
@@ -42,7 +61,7 @@ export default {
       top: 20px;
       right: 20px;
       content: '';
-      width: 100px;
+      width: 20px;
       height: 2px;
       background: black;
       display: block;
@@ -65,11 +84,17 @@ export default {
       height: auto;
       background: black;
       img {
-        width: 100%;
+        width: auto;
+        height: 400px;
+        object-fit: cover;
       }
     }
     .description {
       color: #333;
+      padding: 20px;
+    }
+    h2 {
+      padding: 20px;
     }
   }
 </style>
